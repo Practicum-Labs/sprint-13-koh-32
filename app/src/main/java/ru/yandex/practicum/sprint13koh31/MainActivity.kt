@@ -116,16 +116,31 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-                catalogItemsAdapter.setItems(catalogItems)
-            }
-            onRemoveCountClickListener = OnRemoveCountClickListener { item ->
-                catalogItems = catalogItems.map {
+                cartItems = cartItems.map {
                     if (it.id == item.id) {
-                        it.copy(count = (it.count ?: 0) - 1)
+                        it.copy(count = (it.count ?: 0) + 1)
                     } else {
                         it
                     }
                 }
+                cartItemsAdapter.setItems(cartItems)
+                catalogItemsAdapter.setItems(catalogItems)
+            }
+            onRemoveCountClickListener = OnRemoveCountClickListener { item ->
+                catalogItems = catalogItems.map { catalogItem ->
+                    if (catalogItem.id == item.id) {
+                        cartItems = cartItems.toMutableList().apply {
+                            removeIf { cartItem ->
+                                cartItem.catalogItem.id == catalogItem.id
+                            }
+                        }
+                        catalogItem.copy(count = (catalogItem.count ?: 0) - 1)
+                    } else {
+                        catalogItem
+                    }
+                }
+
+                cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
             }
         }
