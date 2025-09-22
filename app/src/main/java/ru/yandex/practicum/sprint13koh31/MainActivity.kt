@@ -37,6 +37,15 @@ class MainActivity : AppCompatActivity() {
     var catalogItems = emptyList<CatalogItemViewData>()
     var cartItems = emptyList<CartItem>()
 
+
+    private fun updateCartUi() {
+        val visibleItems = cartItems.filter { it.count > 0 }
+        cartItemsAdapter.setItems(visibleItems)
+
+        val isEmpty = visibleItems.isEmpty()
+        binding.cartEmptyTitle.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
@@ -100,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                         }
-                        cartItemsAdapter.setItems(cartItems)
+                        updateCartUi()
                         it.copy(count = 1)
                     } else {
                         it
@@ -123,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-                cartItemsAdapter.setItems(cartItems)
+                updateCartUi()
                 catalogItemsAdapter.setItems(catalogItems)
             }
             onRemoveCountClickListener = OnRemoveCountClickListener { item ->
@@ -140,7 +149,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                cartItemsAdapter.setItems(cartItems)
+                updateCartUi()
                 catalogItemsAdapter.setItems(catalogItems)
             }
         }
@@ -153,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             itemAnimator = null
         }
 
-        cartItemsAdapter.setItems(cartItems)
+        updateCartUi()
         with(cartItemsAdapter) {
             onAddCountClickListener = OnCartAddCountClickListener { item ->
                 cartItems = cartItems.map {
@@ -163,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-                cartItemsAdapter.setItems(cartItems)
+                updateCartUi()
             }
             onRemoveCountClickListener = OnCartRemoveCountClickListener { item ->
                 cartItems = cartItems.map {
@@ -173,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-                cartItemsAdapter.setItems(cartItems)
+                updateCartUi()
             }
         }
     }
@@ -207,6 +216,7 @@ class MainActivity : AppCompatActivity() {
                     binding.toolbar.setTitle(R.string.cart_title)
                     binding.catalogContainer.visibility = View.GONE
                     binding.cartContainer.visibility = View.VISIBLE
+                    updateCartUi()
                 }
             }
             currentScreenMode = newScreenMode
